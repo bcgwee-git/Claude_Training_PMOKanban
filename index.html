@@ -289,7 +289,7 @@ button { cursor: pointer; }
 .toast-region {
   position: fixed;
   right: var(--sp-4);
-  bottom: var(--sp-4);
+  bottom: 104px;                 /* sits above the chatbot launcher */
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -306,6 +306,136 @@ button { cursor: pointer; }
   font-weight: 600;
 }
 .toast.warn { border-left-color: #f5b400; }
+
+/* ========== CHATBOT ========== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.chatbot {
+  position: fixed;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-3);
+}
+.chat-launcher {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--blue-600);
+  box-shadow: 0 4px 14px rgba(11, 36, 71, 0.4);
+  animation: bob 3s ease-in-out infinite;
+}
+.chat-launcher:hover { background: var(--blue-700); }
+.chat-launcher .avatar, .chat-launcher svg { width: 100%; height: 100%; display: block; }
+.chat-hint {
+  position: absolute;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  color: var(--blue-900);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+.chatbot.is-open .chat-hint { display: none; }
+.eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 4s infinite;
+}
+@keyframes blink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-launcher, .eye { animation: none; }
+}
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: calc(100vw - 2 * var(--sp-4));
+  height: 480px;
+  max-height: calc(100vh - 140px);
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(11, 36, 71, 0.35);
+  overflow: hidden;
+}
+.chat-panel[hidden] { display: none; }
+.chat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--blue-900);
+  color: #fff;
+}
+.chat-head .avatar { width: 36px; height: 36px; flex: none; background: var(--blue-600); border-radius: 50%; }
+.chat-head .avatar svg { width: 100%; height: 100%; display: block; }
+.chat-title { flex: 1; display: flex; flex-direction: column; line-height: 1.2; }
+.chat-sub { font-size: 11px; opacity: 0.8; }
+.chat-head .icon-btn { color: #fff; }
+.chat-head .icon-btn:hover { background: var(--blue-700); color: #fff; }
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-3);
+  background: var(--blue-50);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.msg {
+  max-width: 88%;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 12px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.msg p { margin: 0; white-space: pre-wrap; }
+.msg-bot { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 2px; }
+.msg-user { align-self: flex-end; background: var(--blue-600); color: #fff; border-bottom-right-radius: 2px; }
+.msg-src { margin-top: var(--sp-1); font-size: 11px; color: var(--ink-soft); }
+.chat-chips { display: flex; flex-wrap: wrap; gap: var(--sp-1); padding: var(--sp-2) var(--sp-3) 0; }
+.chat-chips button {
+  border: 1px solid var(--blue-100);
+  background: var(--blue-50);
+  color: var(--blue-800);
+  border-radius: 999px;
+  padding: 2px var(--sp-2);
+  font-size: 12px;
+}
+.chat-chips button:hover { background: var(--blue-100); }
+.chat-form { display: flex; gap: var(--sp-2); padding: var(--sp-3); }
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 1100px) {
@@ -402,6 +532,32 @@ button { cursor: pointer; }
       </div>
     </form>
   </section>
+</div>
+
+<!-- ========== CHATBOT WIDGET (avatar SVG injected by initChat) ========== -->
+<div class="chatbot" id="chatbot">
+  <section class="chat-panel" id="chatPanel" role="dialog" aria-label="IT assistant chat" hidden>
+    <header class="chat-head">
+      <span class="avatar" aria-hidden="true"></span>
+      <div class="chat-title">
+        <strong>IT Assistant</strong>
+        <span class="chat-sub">Ask about tasks and the board</span>
+      </div>
+      <button type="button" class="icon-btn" id="chatVoice" aria-pressed="true" aria-label="Voice greeting on" title="Toggle voice greeting">&#128266;</button>
+      <button type="button" class="icon-btn" id="chatClose" aria-label="Close chat">&times;</button>
+    </header>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chatChips"></div>
+    <form class="chat-form" id="chatForm" autocomplete="off">
+      <label class="sr-only" for="chatInput">Your question</label>
+      <input type="text" id="chatInput" maxlength="200" placeholder="Ask e.g. what is overdue?">
+      <button type="submit" class="btn">Send</button>
+    </form>
+  </section>
+  <button type="button" class="chat-launcher" id="chatLauncher" aria-label="Open IT assistant chat" aria-expanded="false" aria-controls="chatPanel">
+    <span class="avatar" aria-hidden="true"></span>
+    <span class="chat-hint">Hi! Need help?</span>
+  </button>
 </div>
 
 <!-- Toast region (aria-live so screen readers announce messages) -->
@@ -865,6 +1021,63 @@ initFormControls();
 seedTasks();
 wireEvents();
 renderBoard();
+</script>
+<script>
+/* ===== IT meeting reminder (source: .claude/hooks/meeting-reminder.js) ===== */
+/* IT meeting reminder: after 10 seconds on the page, show a modal dialog.
+   Self-contained (injects its own CSS + dialog). Inlined into index.html, v2/ and v3/. */
+(function () {
+  var DELAY_MS = 10000;
+  var MESSAGE = "There is an IT meeting next Wednesday at 10:00 AM in Room 111.";
+
+  var css =
+    ".itm-dialog{border:0;border-radius:12px;padding:0;max-width:min(92vw,420px);box-shadow:0 20px 60px rgba(0,0,0,.35);font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#1b2a41}" +
+    ".itm-dialog::backdrop{background:rgba(10,25,50,.55)}" +
+    ".itm-head{background:#1f5fbf;color:#fff;padding:14px 20px;font-weight:600;font-size:16px}" +
+    ".itm-body{padding:20px;font-size:15px;line-height:1.5}" +
+    ".itm-foot{padding:0 20px 18px;text-align:right}" +
+    ".itm-ok{background:#1f5fbf;color:#fff;border:0;border-radius:8px;padding:8px 22px;font-size:14px;cursor:pointer}" +
+    ".itm-ok:hover{background:#174a96}.itm-ok:focus-visible{outline:3px solid #8db6f2;outline-offset:2px}";
+
+  function show() {
+    if (typeof HTMLDialogElement === "undefined") { return; }
+    var style = document.createElement("style");
+    style.textContent = css;
+    document.head.appendChild(style);
+
+    var dlg = document.createElement("dialog");
+    dlg.className = "itm-dialog";
+    dlg.setAttribute("aria-labelledby", "itm-title");
+
+    var head = document.createElement("div");
+    head.className = "itm-head";
+    head.id = "itm-title";
+    head.textContent = "\uD83D\uDCC5 IT Meeting Reminder";
+
+    var body = document.createElement("div");
+    body.className = "itm-body";
+    body.textContent = MESSAGE;
+
+    var foot = document.createElement("div");
+    foot.className = "itm-foot";
+    var ok = document.createElement("button");
+    ok.type = "button";
+    ok.className = "itm-ok";
+    ok.textContent = "Got it";
+    ok.addEventListener("click", function () { dlg.close(); });
+    foot.appendChild(ok);
+
+    dlg.appendChild(head);
+    dlg.appendChild(body);
+    dlg.appendChild(foot);
+    dlg.addEventListener("close", function () { dlg.remove(); style.remove(); });
+    document.body.appendChild(dlg);
+    dlg.showModal();
+    ok.focus();
+  }
+
+  setTimeout(show, DELAY_MS);
+})();
 </script>
 </body>
 </html>
