@@ -39,3 +39,9 @@ A GitHub Actions workflow ([.github/workflows/pages.yml](.github/workflows/pages
 A redesigned version lives in [v2/index.html](v2/index.html) and deploys alongside V1 at `/v2/`: https://bcgwee-git.github.io/Claude_Training_PMOKanban/v2/
 
 V2 adds a hero with live board stats, a top 3 most-viewed YouTube videos section (thumbnails load from `i.ytimg.com`), and a top 3 stocks section. Stock prices are **sample data** until `QUOTE_ENDPOINT` in the script points to a quote service. V1 (`index.html`) is unchanged. V2 keeps the no-storage, no-`!important` rules but, by design, makes image and optional quote requests that V1 does not.
+
+## V3 (professional redesign)
+
+[v3/index.html](v3/index.html) deploys at `/v3/`: https://bcgwee-git.github.io/Claude_Training_PMOKanban/v3/
+
+V3 removes the YouTube and stock sections, uses one blue hue in three tones, and adds a one-line status computed live from the tasks (On track, Needs attention or At risk). It makes no network calls other than the FormSubmit POST. V1 and V2 are unchanged.

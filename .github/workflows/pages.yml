@@ -29,9 +29,9 @@ jobs:
           fi
       - name: Check V2 exists and has no forbidden APIs
         run: |
-          test -f v2/index.html
-          if grep -nE 'localStorage|sessionStorage|indexedDB|!important|alert\(|confirm\(' v2/index.html; then
-            echo "::error::Forbidden API or CSS found in v2/index.html"
+          test -f v2/index.html && test -f v3/index.html
+          if grep -nE 'localStorage|sessionStorage|indexedDB|!important|alert\(|confirm\(' v2/index.html v3/index.html; then
+            echo "::error::Forbidden API or CSS found in v2 or v3"
             exit 1
           fi
       - name: Check FORMSUBMIT_ENDPOINT is still the placeholder
@@ -50,12 +50,14 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Stage site (V1 at root, V2 in /v2/)
+      - name: Stage site (V1 at root, V2 in /v2/, V3 in /v3/)
         run: |
           mkdir _site
           cp index.html _site/
           mkdir _site/v2
           cp v2/index.html _site/v2/
+          mkdir _site/v3
+          cp v3/index.html _site/v3/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
