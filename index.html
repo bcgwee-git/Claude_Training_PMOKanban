@@ -1197,14 +1197,20 @@ function speak(text) {
   if (!chat.voiceOn || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "en-US";
-    u.rate = 1;
-    u.pitch = 1.15;
+    // Bombastic showman delivery: deep male voice, slow pace, a beat between phrases.
+    // (Browser speech cannot clone a real person; this is just a style.)
     const voices = window.speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
-    const pick = voices.find(v => /zira|aria|jenny|samantha|female/i.test(v.name)) || voices[0];
-    if (pick) u.voice = pick;
-    window.speechSynthesis.speak(u);
+    const pick = voices.find(v => /^en-US/i.test(v.lang) && /david|mark|guy|alex|fred|male/i.test(v.name)) ||
+                 voices.find(v => /david|mark|guy|alex|fred|male|daniel/i.test(v.name)) || voices[0];
+    text.split(/(?<=[,.?!])\s+/).forEach((phrase, i, all) => {
+      const u = new SpeechSynthesisUtterance(phrase);
+      u.lang = "en-US";
+      u.rate = 0.82;
+      u.pitch = i === all.length - 1 ? 0.6 : 0.75;   // dips on the closing phrase
+      u.volume = 1;
+      if (pick) u.voice = pick;
+      window.speechSynthesis.speak(u);
+    });
   } catch (err) { /* voice is a nicety; never break the board */ }
 }
 

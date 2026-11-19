@@ -34,7 +34,7 @@ Classes that set `display` (e.g. `.overlay { display:flex }`) override the `hidd
 
 - Bottom-right "IT Assistant" avatar (inline SVG, `AVATAR_SVG`) opens a text chat. State lives in the `chat` object; `renderChat()` rebuilds the messages and panel state.
 - It is a client-side RAG: `retrieve()` runs BM25 over `helpDocs()` (static articles) plus `liveDocs()` (regenerated from `state.tasks` on every question), and `answerQuestion()` composes the reply from the top passages and lists its sources. No network call.
-- Clicking the launcher speaks the greeting with the browser `speechSynthesis` API (the 🔊 header button mutes it). New help topics go in `helpDocs()`.
+- Clicking the launcher speaks the greeting with the browser `speechSynthesis` API (deep, slow, phrase-by-phrase showman delivery) (the 🔊 header button mutes it). New help topics go in `helpDocs()`.
 
 ## Hooks
 
