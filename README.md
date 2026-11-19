@@ -33,3 +33,9 @@ Vanilla HTML, CSS and JavaScript in one file. No frameworks, build step, npm, CD
 ## CI/CD
 
 A GitHub Actions workflow ([.github/workflows/pages.yml](.github/workflows/pages.yml)) runs on every push to `main`. It checks the project constraints (no storage APIs, no `!important`, no `alert()`/`confirm()`, placeholder email intact), then deploys `index.html` to GitHub Pages.
+
+## V2 (redesign)
+
+A redesigned version lives in [v2/index.html](v2/index.html) and deploys alongside V1 at `/v2/`: https://bcgwee-git.github.io/Claude_Training_PMOKanban/v2/
+
+V2 adds a hero with live board stats, a top 3 most-viewed YouTube videos section (thumbnails load from `i.ytimg.com`), and a top 3 stocks section. Stock prices are **sample data** until `QUOTE_ENDPOINT` in the script points to a quote service. V1 (`index.html`) is unchanged. V2 keeps the no-storage, no-`!important` rules but, by design, makes image and optional quote requests that V1 does not.
