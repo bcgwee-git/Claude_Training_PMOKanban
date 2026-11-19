@@ -29,3 +29,13 @@ After editing, re-check the constraints with a grep for `localStorage|sessionSto
 ## CSS gotcha
 
 Classes that set `display` (e.g. `.overlay { display:flex }`) override the `hidden` attribute because they have equal specificity and come later. Add an explicit `.x[hidden] { display: none; }` rule, as `.overlay[hidden]` does. Don't use `!important`.
+
+## Chatbot widget
+
+- Bottom-right "IT Assistant" avatar (inline SVG, `AVATAR_SVG`) opens a text chat. State lives in the `chat` object; `renderChat()` rebuilds the messages and panel state.
+- It is a client-side RAG: `retrieve()` runs BM25 over `helpDocs()` (static articles) plus `liveDocs()` (regenerated from `state.tasks` on every question), and `answerQuestion()` composes the reply from the top passages and lists its sources. No network call.
+- Clicking the launcher speaks the greeting with the browser `speechSynthesis` API (the 🔊 header button mutes it). New help topics go in `helpDocs()`.
+
+## Hooks
+
+`.claude/settings.json` registers `.claude/hooks/check-constraints.ps1` (PostToolUse on Edit/Write). It re-runs the constraint grep on `index.html` and exits 2 with the offending lines if a hard constraint is broken.
